@@ -12,7 +12,7 @@ type Config struct {
 	Env string `yaml:"env" env-default:"prod"`
 }
 
-func MustLoad() Config {
+func NewConfig() Config {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("error loading .env file")

@@ -22,7 +22,7 @@ func main() {
 			slog.String("где вылезла ошибка", op),
 		)
 	*/
-	cfg := config.MustLoad()
+	cfg := config.NewConfig()
 	log := setupLogger(cfg.Env)
 	log.Info("Starting project", slog.String("env", cfg.Env))
 	log.Debug("debug messages are enabled", slog.String("env", cfg.Env))
