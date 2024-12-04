@@ -1,13 +1,31 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"log"
+	"complaint_service/internal/config"
+	"log/slog"
+	"os"
+
+	"github.com/gofiber/fiber"
 )
 
 const port = ":8080"
+const (
+	envLocal = "local"
+	envProd  = "prod"
+)
 
 func main() {
+	/*
+		Далее передаем в наши ручки log *slog.Logger и с ним работаем.
+		Для удобства, в каждой ручке можно использовать такую конструкцию, чтоб дальше подтягивалась информация.
+		log := log.With(
+			slog.String("где вылезла ошибка", op),
+		)
+	*/
+	cfg := config.MustLoad()
+	log := setupLogger(cfg.Env)
+	log.Info("Starting project", slog.String("env", cfg.Env))
+	log.Debug("debug messages are enabled", slog.String("env", cfg.Env))
 	/*
 		Инициализируем БД. И коннект прокидываем в CreateComplaintsRepository
 		complaintsRepository := repository.CreateComplaintsRepository(db)
@@ -25,8 +43,22 @@ func main() {
 		Подключаем роуты. Прокидываем инициализированные хендлеры complaintsHandler
 		routes.Complaints(app, complaintsHandler)
 	*/
-	log.Println("The server is running")
+	log.Info("The server is running", slog.String("port", port))
 	if err := app.Listen(port); err != nil {
-		log.Fatalf("Server startup error: %v", err)
+		log.Error("Server startup error: %v", err)
 	}
+}
+
+func setupLogger(env string) *slog.Logger {
+	var log *slog.Logger
+
+	switch env {
+	case envLocal:
+		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+
+	case envProd:
+		log = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+	}
+	return log
+
 }
