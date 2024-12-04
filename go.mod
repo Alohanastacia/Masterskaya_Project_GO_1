@@ -1,4 +1,4 @@
-module github.com/Alohanastacia/Masterskaya_Project_GO_1
+module complaint_service
 
 go 1.23.3
 

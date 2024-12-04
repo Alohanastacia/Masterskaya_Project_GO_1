@@ -5,6 +5,8 @@ import (
 	"log"
 )
 
+const port = ":8080"
+
 func main() {
 	/*
 		Инициализируем БД. И коннект прокидываем в CreateComplaintsRepository
@@ -23,8 +25,8 @@ func main() {
 		Подключаем роуты. Прокидываем инициализированные хендлеры complaintsHandler
 		routes.Complaints(app, complaintsHandler)
 	*/
-	log.Println("Сервер запущен")
-	if err := app.Listen(":8080"); err != nil {
-		log.Fatalf("Ошибка запуска сервера: %v", err)
+	log.Println("The server is running")
+	if err := app.Listen(port); err != nil {
+		log.Fatalf("Server startup error: %v", err)
 	}
 }
