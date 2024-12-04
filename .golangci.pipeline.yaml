@@ -1,0 +1,46 @@
+# More info on config here: https://golangci-lint.run/usage/configuration/#config-file
+run:
+  concurrency: 8
+  timeout: 10m
+  issues-exit-code: 1
+  tests: true
+  issues:
+    exclude-files:
+      - \.pb\.go$
+      - \.pb\.gw\.go$
+    exclude-dirs:
+      - bin
+      - vendor
+      - var
+      - tmp
+      - .cache
+
+output:
+  formats: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters-settings:
+  govet:
+    shadow: true
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - goconst
+    - goimports
+    - gosec
+    - govet
+    - ineffassign
+    - revive
+    - unused
+
+issues:
+  exclude-use-default: false
+  exclude:
+    - G104 # Duplicated errcheck checks
+    - should have a package comment # Annoying issue about not having a comment. The rare codebase has such comments.
