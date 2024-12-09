@@ -1,0 +1,12 @@
+CREATE TYPE user_role AS ENUM ('USER', 'ADMIN');
+
+CREATE TABLE IF NOT EXISTS users(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id INT GENERATED ALWAYS AS IDENTITY,
+    user_name VARCHAR(32),
+    role VARCHAR(8),
+    password VARCHAR(32),
+    status VARCHAR(32)
+);
+CREATE INDEX IF NOT EXISTS idx_user_id ON users (user_id);
+
