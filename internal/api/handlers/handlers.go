@@ -24,8 +24,8 @@ func CreateComplaintsHandler(complaintsProcessor ComplaintsProcessor) *Complaint
 // of the specified resource. Requests using GET should only retrieve data.
 
 func (h *ComplaintsHandler) ChangeAdminRole(c *fiber.Ctx) error {
-	userID := c.Params("user_id")
-	query := `UPDATE users SET role = 'ADMIN' WHERE user_id = $1`
+	userID := c.Params("user_uuid")
+	query := `UPDATE users SET role = 'ADMIN' WHERE user_uuid = $1`
 	_, err := repository.Users{}.Exec(query, userID)
 	if err != nil {
 		return c.Status(500).SendString("Error updating role")

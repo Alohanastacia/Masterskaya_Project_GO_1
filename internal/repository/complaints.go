@@ -19,11 +19,10 @@ type Complaint struct {
 
 type Users struct {
 	ID       uint   `db:"id"`
-	UserId   uint   `db:"user_id"`
+	UserUUID uint   `db:"user_uuid"`
 	UserName string `db:"user_name"`
 	Password string `db:"password"`
 	Role     string `db:"role"`
-	Status   string `db:"status"`
 }
 
 type ComplaintsRepository struct {
