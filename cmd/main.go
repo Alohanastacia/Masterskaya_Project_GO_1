@@ -19,10 +19,12 @@ func main() {
 			slog.String("где вылезла ошибка", op),
 		)
 	*/
+
 	cfg := config.NewConfig()
+	str := slog.String("env", cfg.Env)
 	l.SetupLogger(cfg.Env)
-	l.Log.Info("Starting project", slog.String("env", cfg.Env))
-	l.Log.Debug("debug messages are enabled", slog.String("env", cfg.Env))
+	l.Log.Info("Starting project", str)
+	l.Log.Debug("debug messages are enabled", str)
 
 	/*
 		Инициализируем БД. И коннект прокидываем в CreateComplaintsRepository
