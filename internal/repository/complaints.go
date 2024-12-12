@@ -1,6 +1,8 @@
 package repository
 
-import "github.com/jmoiron/sqlx"
+import (
+	"github.com/jmoiron/sqlx"
+)
 
 type ComplaintsRepository struct {
 	db *sqlx.DB
