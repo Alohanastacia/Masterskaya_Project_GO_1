@@ -1,7 +1,9 @@
 package processors
 
+import "complaint_service/internal/repository"
+
 type ComplaintsRepository interface {
-	ComplaintsListAdmin(userId string) (err error)
+	ComplaintsListAdmin(UserUUID string) (repository.Users, error)
 	//имплиментируются методы из repository
 }
 
@@ -13,8 +15,8 @@ func CreateComplaintsProcessor(complaintsRepository ComplaintsRepository) *Compl
 	return &ComplaintsProcessor{complaintsRepository}
 }
 
-func (p *ComplaintsProcessor) ComplaintsListAdmin(userId string) (err error) {
-	return p.complaintsRepository.ComplaintsListAdmin(userId)
+func (p *ComplaintsProcessor) ComplaintsListAdmin(UserUUID string) (repository.Users, error) {
+	return p.complaintsRepository.ComplaintsListAdmin(UserUUID)
 }
 
 // Ниже будут методы ComplaintsProcessor, которые реализуют бизнес логику вызываются из хендлеров
