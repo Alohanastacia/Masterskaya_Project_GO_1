@@ -2,6 +2,7 @@ package routes
 
 import (
 	"complaint_service/internal/api/handlers"
+
 	"github.com/gofiber/fiber/v2"
 )
 
