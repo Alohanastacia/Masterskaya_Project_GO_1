@@ -22,7 +22,6 @@ func CreateComplaintsHandler(complaintsProcessor ComplaintsProcessor) *Complaint
 // Get registers a route for GET methods that requests a representation
 // of the specified resource. Requests using GET should only retrieve data.
 
-// func (h *ComplaintsHandler) ChangeAdminRole(c *fiber.Ctx) error {
 func (h *ComplaintsHandler) ComplaintsListAdmin(c *fiber.Ctx) error {
 	UserUUID := c.Params("id")
 	res, err := h.complaintsProcessor.ComplaintsListAdmin(UserUUID)
@@ -31,18 +30,3 @@ func (h *ComplaintsHandler) ComplaintsListAdmin(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
 }
-
-//var exist bool
-
-//emptyCheck := `SELECT EXISTS(SELECT 1 FROM users WHERE user_uuid = $1)`
-//err := repository.Users
-
-//query := `UPDATE users SET role = 'ADMIN' WHERE user_uuid = $1`
-//_, err := repository.Users.Exec(query, userID)
-//if err != nil {
-//	return c.Status(500).SendString("Error updating role")
-//}
-//return c.JSON(fiber.Map{
-//	"status": "роль успешно обновлена",
-//})
-//}

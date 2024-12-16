@@ -10,5 +10,4 @@ func Complaints(app *fiber.App, complaintsHandler *handlers.ComplaintsHandler) {
 	// Пример как задавать роуты
 	//app.Get("api/v1/ping", complaintsHandler.GetComplaints)
 	app.Get("api/v1/users/{id}", complaintsHandler.ComplaintsListAdmin)
-	//app.Put("api/v1/users/:users_id", complaintsHandler.ChangeAdminRole)
 }
