@@ -15,13 +15,13 @@ type Config struct {
 }
 
 type ENVConfig struct {
-	dbHost     string `env:"DB_HOST"`
-	dbPort     int    `env:"DB_PORT"`
-	dbUser     string `env:"DB_USER"`
-	dbPassword string `env:"DB_PASSWORD"`
-	dbDbname   string `env:"DB_DBNAME"`
-	appPort    int    `env:"APP_PORT"`
-	appEnv     string `env:"APP_ENV"`
+	DBHost     string `env:"DB_HOST"`
+	DBPort     int    `env:"DB_PORT"`
+	DBUser     string `env:"DB_USER"`
+	DBPassword string `env:"DB_PASSWORD"`
+	DBDbname   string `env:"DB_DBNAME"`
+	AppPort    int    `env:"APP_PORT"`
+	AppEnv     string `env:"APP_ENV"`
 }
 
 func NewConfig() Config {
@@ -46,62 +46,67 @@ func NewConfig() Config {
 	return cfg
 }
 
-func StorageConfig() (ENVConfig, error) {
+func LoadEnv() (ENVConfig, error) {
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		return ENVConfig{}, fmt.Errorf("error loading .env file: %w", err)
 	}
 
 	dbHost := os.Getenv("DB_HOST")
 	if dbHost == "" {
-		log.Fatal("DB_HOST is not set")
+		return ENVConfig{}, fmt.Errorf("DB_HOST is not set")
 	}
 	dbPort := os.Getenv("DB_PORT")
 	if dbPort == "" {
-		log.Fatal("DB_PORT is not set")
+		return ENVConfig{}, fmt.Errorf("DB_PORT is not set")
 	}
 	dbName := os.Getenv("DB_NAME")
 	if dbName == "" {
-		log.Fatal("DB_NAME is not set")
+		return ENVConfig{}, fmt.Errorf("DB_NAME is not set")
 
 	}
 	dbUser := os.Getenv("DB_USER")
 	if dbUser == "" {
-		log.Fatal("DB_USER is not set")
+		return ENVConfig{}, fmt.Errorf("DB_USER is not set")
 	}
 	dbPassword := os.Getenv("DB_PASSWORD")
 	if dbPassword == "" {
-		log.Fatal("DB_PASSWORD is not set")
+		return ENVConfig{}, fmt.Errorf("DB_PASSWORD is not set")
 	}
 	appPort := os.Getenv("APP_PORT")
 	if appPort == "" {
-		log.Fatal("APP_PORT is not set")
+		return ENVConfig{}, fmt.Errorf("APP_PORT is not set")
 	}
 	appEnv := os.Getenv("APP_ENV")
 	if appEnv == "" {
-		log.Fatal("APP_ENV is not set")
+		return ENVConfig{}, fmt.Errorf("APP_ENV is not set")
 	}
-	return ENVConfig{
-		dbHost:     dbHost,
-		dbPort:     dbPort,
-		dbUser:     dbUser,
-		dbPassword: dbPassword,
-		dbDbname:   dbName,
-		appPort:    appPort,
-		appEnv:     appEnv,
-	}, nil
-}
 
-func ConnectFile(*sql.DB, error) {
 	connStr := fmt.Sprintf(
-		`host=%s port=%s name=%s user=%s password=%s app_port=%s app_env=%s`,
-		dbHost, dbPort, dbName, dbUser, dbPassword, appPort, appEnv)
+		"host=%s port=%s name=%s user=%s password=%s app_port=%s app_env=%s",
+		dbHost,
+		dbPort,
+		dbName,
+		dbUser,
+		dbPassword,
+		dbPort,
+		appEnv,
+	)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		return db, nil
+		return ENVConfig{}, fmt.Errorf("error connecting to database: %w", err)
 	}
 	if err := db.Ping(); err != nil {
-		return nil, err
+		return ENVConfig{}, err
 	}
+	return ENVConfig{
+		DBHost:     dbHost,
+		DBPort:     dbPort,
+		DBUser:     dbUser,
+		DBPassword: dbPassword,
+		DBDbname:   dbName,
+		AppPort:    appPort,
+		AppEnv:     appEnv,
+	}, nil
 }
