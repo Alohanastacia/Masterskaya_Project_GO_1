@@ -16,11 +16,11 @@ type Config struct {
 
 type ENVConfig struct {
 	DBHost     string `env:"DB_HOST"`
-	DBPort     int    `env:"DB_PORT"`
+	DBPort     string `env:"DB_PORT"`
 	DBUser     string `env:"DB_USER"`
 	DBPassword string `env:"DB_PASSWORD"`
 	DBDbname   string `env:"DB_DBNAME"`
-	AppPort    int    `env:"APP_PORT"`
+	AppPort    string `env:"APP_PORT"`
 	AppEnv     string `env:"APP_ENV"`
 }
 
