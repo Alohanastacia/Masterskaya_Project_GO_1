@@ -23,12 +23,11 @@ func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 
 func (rep *ComplaintsRepository) ComplaintsListAdmin(user_uuid string) (Users, error) {
 	var users Users
+	query := `SELECT user_uuid FROM users WHERE user_uuid=? AND role = 'ADMIN'`
 
 	if user_uuid == "" {
 		return users, fmt.Errorf("user_uuid is required")
 	}
-
-	query := `SELECT user_uuid FROM users WHERE user_uuid=? AND role = 'ADMIN'`
 	rows := rep.db.QueryRow(query, user_uuid)
 	err := rows.Scan(&users.UserUUID)
 	if err != nil {
