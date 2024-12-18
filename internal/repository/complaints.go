@@ -20,10 +20,12 @@ func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 
 func (rep *ComplaintsRepository) GetComplaint(uuid string) (model.GetComplaint, error) {
 	var getComplaint model.GetComplaint
-	query := `SELECT UUID, stage, priority, description, created_at FROM reports WHERE UUID = :uuid`
+	const query = `SELECT UUID, stage, priority, description, created_at FROM reports WHERE UUID = :uuid`
+
 	rows := rep.db.QueryRow(query, sql.Named("uuid", uuid))
 	if err := rows.Scan(&getComplaint.UUID, &getComplaint.Stage, &getComplaint.Priority, &getComplaint.Description, &getComplaint.Created_at); err != nil {
 		return getComplaint, fmt.Errorf("UUID is not found %w", err)
 	}
+
 	return getComplaint, nil
 }
