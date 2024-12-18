@@ -5,12 +5,19 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+type Role string
+
+const (
+	User  Role = "USER"
+	Admin Role = "ADMIN"
+)
+
 type Users struct {
 	ID       uint   `db:"id" json:"id"`
 	UserUUID uint   `db:"user_uuid" json:"user_uuid"`
 	UserName string `db:"user_name" json:"user_name"`
 	Password string `db:"password" json:"password"`
-	Role     string `db:"role" json:"role"`
+	Role     Role   `db:"role" json:"role"`
 }
 
 type ComplaintsRepository struct {
@@ -23,7 +30,10 @@ func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 
 func (rep *ComplaintsRepository) ComplaintsListAdmin(user_uuid string) (Users, error) {
 	var users Users
-	query := `SELECT user_uuid FROM users WHERE user_uuid=? AND role = 'ADMIN'`
+	if users.Role != `ADMIN` {
+		return users, fmt.Errorf("access errors, insufficient rights")
+	}
+	query := `SELECT user_uuid FROM users WHERE user_uuid=?`
 
 	if user_uuid == "" {
 		return users, fmt.Errorf("user_uuid is required")
