@@ -2,8 +2,11 @@ CREATE TYPE role AS ENUM ('USER', 'ADMIN');
 
 CREATE TABLE IF NOT EXISTS users(
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    user_uuid INT GENERATED ALWAYS AS IDENTITY,
-    username UUID,
+    user_uuid uuid GENERATED ALWAYS AS IDENTITY,
+    username uuid,
+    email TEXT,
+    phone INT,
+    blacklisted boolean,
     role role,
     password VARCHAR(32)
 );

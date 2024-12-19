@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"complaint_service/internal/repository"
+	"complaint_service/internal/entity"
 	"github.com/gofiber/fiber/v2"
 )
 
 type ComplaintsProcessor interface {
-	ComplaintsListAdmin(UserUUID string) (repository.Users, error)
+	FindUsers(UserUUID string) (entity.Users, error)
 	//имплиментируются методы из processors
 }
 
@@ -22,9 +22,9 @@ func CreateComplaintsHandler(complaintsProcessor ComplaintsProcessor) *Complaint
 // Get registers a route for GET methods that requests a representation
 // of the specified resource. Requests using GET should only retrieve data.
 
-func (h *ComplaintsHandler) ComplaintsListAdmin(c *fiber.Ctx) error {
+func (h *ComplaintsHandler) FindUsers(c *fiber.Ctx) error {
 	UserUUID := c.Params("id")
-	res, err := h.complaintsProcessor.ComplaintsListAdmin(UserUUID)
+	res, err := h.complaintsProcessor.FindUsers(UserUUID)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "UserUUID is not found"})
 	}
