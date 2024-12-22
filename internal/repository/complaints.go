@@ -6,6 +6,11 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+const (
+	defaultOffset = 0
+	defaultLimit  = 10
+)
+
 type ComplaintsRepository struct {
 	db *sqlx.DB
 }
@@ -14,26 +19,34 @@ func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 	return &ComplaintsRepository{db: db}
 }
 
-func (rep *ComplaintsRepository) FindUsers(UserUUID string) ([]*entity.Users, error) {
+func (rep *ComplaintsRepository) FindUsers(UserUUID string, limit, offset int) ([]*entity.Users, error) {
 
 	var user entity.Users
-	const query = `SELECT user_uuid, username,email, role, phone,blacklisted 
+
+	if limit <= 0 {
+		limit = defaultLimit
+	}
+	if offset < 0 {
+		offset = defaultOffset
+	}
+
+	const query = `SELECT user_uuid, username, email, role, phone, blacklisted 
 					FROM users 
 					WHERE user_uuid = ?
-					ORDER BY user_uuid 
-					OFFSET ? ROWS FETCH NEXT 10 ROWS ONLY;`
+					ORDER BY user_uuid
+					LIMIT ? OFFSET ?`
 
 	if UserUUID == "" {
 		return nil, fmt.Errorf("user_uuid is required")
 	}
-	rows := rep.db.QueryRow(query, UserUUID)
+	rows := rep.db.QueryRow(query, UserUUID, limit, offset)
+
 	err := rows.Scan(
 		&user.UserUUID,
 		&user.UserName,
 		&user.Email,
 		&user.Role,
 		&user.Phone,
-		&user.Blacklisted,
 	)
 	if user.Role != entity.Admin {
 		return nil, fmt.Errorf("access errors, insufficient rights")

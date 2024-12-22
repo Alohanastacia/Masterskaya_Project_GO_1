@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS users(
     username uuid,
     email TEXT,
     phone INT,
-    blacklisted boolean,
     role role,
     password VARCHAR(32)
 );
