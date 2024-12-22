@@ -12,11 +12,13 @@ const (
 )
 
 type ComplaintsRepository struct {
-	db *sqlx.DB
+	Authorization
 }
 
 func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
-	return &ComplaintsRepository{db: db}
+	return &ComplaintsRepository{
+		Authorization: NewAuthPostgres(db),
+	}
 }
 
 func (rep *ComplaintsRepository) FindUsers(UserUUID string, limit, offset int) ([]*entity.Users, error) {

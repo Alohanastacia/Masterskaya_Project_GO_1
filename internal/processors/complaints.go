@@ -10,11 +10,13 @@ type ComplaintsRepository interface {
 }
 
 type ComplaintsProcessor struct {
-	complaintsRepository ComplaintsRepository
+	Authorization
 }
 
-func CreateComplaintsProcessor(complaintsRepository ComplaintsRepository) *ComplaintsProcessor {
-	return &ComplaintsProcessor{complaintsRepository}
+func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsRepository) *ComplaintsProcessor {
+	return &ComplaintsProcessor{
+		Authorization: NewAuthService(complaintsRepository.Authorization),
+	}
 }
 
 func (p *ComplaintsProcessor) FindUsers(UserUUID string) ([]*entity.Users, error) {

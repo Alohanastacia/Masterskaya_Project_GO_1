@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"complaint_service/internal/entity"
-	"github.com/gofiber/fiber/v2"
+	"complaint_service/internal/processors"
+
+	"github.com/gofiber/fiber"
 )
 
 type ComplaintsProcessor interface {
@@ -11,7 +13,7 @@ type ComplaintsProcessor interface {
 }
 
 type ComplaintsHandler struct {
-	complaintsProcessor ComplaintsProcessor
+	complaintsProcessor *processors.ComplaintsProcessor
 }
 
 func CreateComplaintsHandler(complaintsProcessor ComplaintsProcessor) *ComplaintsHandler {
@@ -29,4 +31,9 @@ func (h *ComplaintsHandler) FindUsers(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "UserUUID is not found"})
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+// Функция InitRoutes инициализирует роуты. Принимает на вход переменную типа fiber.App
+func (h *ComplaintsHandler) InitRoutes(app *fiber.App) {
+	app.Post("user/register", h.signUp)
 }

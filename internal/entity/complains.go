@@ -9,7 +9,7 @@ const (
 
 type Users struct {
 	ID       uint   `db:"id" json:"id"`
-	UserUUID uint   `db:"user_uuid" json:"user_uuid"`
+	UserUUID uint   `db:"user_uuid" json:"user_UUID"`
 	UserName string `db:"user_name" json:"user_name"`
 	Password string `db:"password" json:"password"`
 	Email    string `db:"email" json:"email"`
