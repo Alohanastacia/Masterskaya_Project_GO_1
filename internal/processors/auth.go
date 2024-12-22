@@ -12,7 +12,7 @@ import (
 const salt = "afdafadfadfadf"
 
 type Authorization interface {
-	CreateUser(user entity.User) (int, error)
+	CreateUser(user entity.Users) (int, error)
 }
 
 type AuthService struct {
@@ -29,9 +29,9 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 
 возвращает id типа int и ошибку типа error.
 */
-func (s *AuthService) CreateUser(user entity.User) (int, error) {
-	user.User_UUID = uuid.NewV4()
-	if len(user.Password) == 0 || len(user.Username) == 0 {
+func (s *AuthService) CreateUser(user entity.Users) (int, error) {
+	user.UserUUID = uuid.NewV4()
+	if len(user.Password) == 0 || len(user.UserName) == 0 {
 		return 0, fmt.Errorf("имя пользователя или пароль не могут быть пустыми")
 	}
 	user.Password = generatePasswordHash(user.Password)

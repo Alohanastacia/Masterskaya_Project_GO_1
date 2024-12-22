@@ -3,6 +3,7 @@ package handlers
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/processors"
+	fiber2 "github.com/gofiber/fiber/v2"
 
 	"github.com/gofiber/fiber"
 )
@@ -17,14 +18,14 @@ type ComplaintsHandler struct {
 }
 
 func CreateComplaintsHandler(complaintsProcessor ComplaintsProcessor) *ComplaintsHandler {
-	return &ComplaintsHandler{complaintsProcessor}
+	return &ComplaintsHandler{}
 }
 
 // Ниже будут методы-хендлеры. Вызывают через интерфейс ComplaintsProcessor нужные методы бизнес логики
 // Get registers a route for GET methods that requests a representation
 // of the specified resource. Requests using GET should only retrieve data.
 
-func (h *ComplaintsHandler) FindUsers(c *fiber.Ctx) error {
+func (h *ComplaintsHandler) FindUsers(c *fiber2.Ctx) error {
 	UserUUID := c.Params("id")
 	res, err := h.complaintsProcessor.FindUsers(UserUUID)
 	if err != nil {

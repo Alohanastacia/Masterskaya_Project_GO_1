@@ -2,6 +2,7 @@ package processors
 
 import (
 	"complaint_service/internal/entity"
+	"complaint_service/internal/repository"
 )
 
 type ComplaintsRepository interface {
@@ -20,7 +21,8 @@ func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsReposi
 }
 
 func (p *ComplaintsProcessor) FindUsers(UserUUID string) ([]*entity.Users, error) {
-	return p.complaintsRepository.FindUsers(UserUUID)
+	return p.FindUsers(UserUUID)
+	//return p.complaintsRepository.FindUsers(UserUUID)
 }
 
 // Ниже будут методы ComplaintsProcessor, которые реализуют бизнес логику вызываются из хендлеров

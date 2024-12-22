@@ -11,6 +11,10 @@ const (
 	defaultLimit  = 10
 )
 
+type ComplaintsDB struct {
+	db *sqlx.DB
+}
+
 type ComplaintsRepository struct {
 	Authorization
 }
@@ -21,7 +25,7 @@ func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 	}
 }
 
-func (rep *ComplaintsRepository) FindUsers(UserUUID string, limit, offset int) ([]*entity.Users, error) {
+func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entity.Users, error) {
 
 	var user entity.Users
 
@@ -32,7 +36,7 @@ func (rep *ComplaintsRepository) FindUsers(UserUUID string, limit, offset int) (
 		offset = defaultOffset
 	}
 
-	const query = `SELECT user_uuid, username, email, role, phone, blacklisted 
+	const query = `SELECT user_uuid, username, email, role, phone
 					FROM users 
 					WHERE user_uuid = ?
 					ORDER BY user_uuid
