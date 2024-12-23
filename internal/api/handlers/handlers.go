@@ -10,7 +10,7 @@ import (
 )
 
 type ComplaintsProcessor interface {
-	FindUsers(UserUUID string) (entity.User, error)
+	FindUsers(UserUUID string) (entity.Users, error)
 	//имплиментируются методы из processors
 }
 

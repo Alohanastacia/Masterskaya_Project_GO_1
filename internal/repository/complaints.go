@@ -26,9 +26,9 @@ func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 	}
 }
 
-func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entity.User, error) {
+func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entity.Users, error) {
 
-	var user entity.User
+	var user entity.Users
 
 	if limit <= 0 {
 		limit = defaultLimit
@@ -62,7 +62,7 @@ func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entit
 		return nil, fmt.Errorf("user_uuid not found")
 	}
 
-	return []*entity.User{&user}, nil
+	return []*entity.Users{&user}, nil
 }
 
 // Ниже будут методы ComplaintsRepository, которые делают запросы в БД и отдают результат

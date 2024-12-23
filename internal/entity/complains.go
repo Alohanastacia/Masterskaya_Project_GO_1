@@ -5,11 +5,11 @@ import uuid "github.com/satori/go.uuid"
 type Role string
 
 const (
-	Users Role = "USER"
+	User  Role = "USER"
 	Admin Role = "ADMIN"
 )
 
-type User struct {
+type Users struct {
 	ID       uint      `db:"id" json:"id"`
 	UserUUID uuid.UUID `db:"user_UUID" json:"user_UUID"`
 	UserName string    `db:"user_name" json:"user_name"`
