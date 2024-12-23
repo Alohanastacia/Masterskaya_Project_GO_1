@@ -3,6 +3,7 @@ package repository
 import (
 	"complaint_service/internal/entity"
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
 )
 
@@ -25,9 +26,9 @@ func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 	}
 }
 
-func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entity.Users, error) {
+func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entity.User, error) {
 
-	var user entity.Users
+	var user entity.User
 
 	if limit <= 0 {
 		limit = defaultLimit
@@ -61,7 +62,7 @@ func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entit
 		return nil, fmt.Errorf("user_uuid not found")
 	}
 
-	return []*entity.Users{&user}, nil
+	return []*entity.User{&user}, nil
 }
 
 // Ниже будут методы ComplaintsRepository, которые делают запросы в БД и отдают результат

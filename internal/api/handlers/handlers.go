@@ -3,13 +3,14 @@ package handlers
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/processors"
+
 	fiber2 "github.com/gofiber/fiber/v2"
 
 	"github.com/gofiber/fiber"
 )
 
 type ComplaintsProcessor interface {
-	FindUsers(UserUUID string) (entity.Users, error)
+	FindUsers(UserUUID string) (entity.User, error)
 	//имплиментируются методы из processors
 }
 

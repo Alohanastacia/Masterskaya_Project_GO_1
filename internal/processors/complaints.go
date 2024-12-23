@@ -6,7 +6,7 @@ import (
 )
 
 type ComplaintsRepository interface {
-	FindUsers(UserUUID string) ([]*entity.Users, error)
+	FindUsers(UserUUID string) ([]*entity.User, error)
 	//имплиментируются методы из repository
 }
 
@@ -20,7 +20,7 @@ func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsReposi
 	}
 }
 
-func (p *ComplaintsProcessor) FindUsers(UserUUID string) ([]*entity.Users, error) {
+func (p *ComplaintsProcessor) FindUsers(UserUUID string) ([]*entity.User, error) {
 	return p.FindUsers(UserUUID)
 	//return p.complaintsRepository.FindUsers(UserUUID)
 }
