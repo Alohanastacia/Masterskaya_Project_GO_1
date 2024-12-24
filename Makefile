@@ -31,3 +31,7 @@ m-status:
 	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
 	goose -dir $(GOOSE_MIGRATION_DIR) \
 	status
+install-uber-mock:	
+	go	install	go.uber.org/mock/mockgen@latest	
+mock-processors:	
+	mockgen	-source=internal/processors/complaints.go	-destination=internal/processors/mocks/mocks.go

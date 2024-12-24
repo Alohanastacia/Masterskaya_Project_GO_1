@@ -2,7 +2,11 @@ package handlers
 
 import (
 	"complaint_service/internal/entity"
+	"complaint_service/internal/logger"
+	"complaint_service/internal/model"
 	"complaint_service/internal/processors"
+
+	"log/slog"
 
 	fiber2 "github.com/gofiber/fiber/v2"
 
@@ -12,6 +16,7 @@ import (
 type ComplaintsProcessor interface {
 	FindUsers(UserUUID string) (entity.Users, error)
 	//имплиментируются методы из processors
+	CreateComplaints(c model.CreateComplaint) (int64, error)
 }
 
 type ComplaintsHandler struct {
@@ -38,4 +43,32 @@ func (h *ComplaintsHandler) FindUsers(c *fiber2.Ctx) error {
 // Функция InitRoutes инициализирует роуты. Принимает на вход переменную типа fiber.App
 func (h *ComplaintsHandler) InitRoutes(app *fiber.App) {
 	app.Post("user/register", h.signUp)
+}
+
+func (h *ComplaintsHandler) CreateComplaints(c *fiber2.Ctx) error {
+
+	var request model.CreateComplaint
+	log := logger.Log
+
+	const op = "handlers.CreateComplaints"
+
+	log.With(
+		slog.String("op", op),
+	)
+
+	if err := c.BodyParser(&request); err != nil {
+		log.Info("error Bad request")
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Bad request"})
+	}
+
+	id, err := h.complaintsProcessor.CreateComplaints(request)
+
+	if err != nil {
+		log.Info("Error saving to database")
+
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error saving to database"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(id)
 }
