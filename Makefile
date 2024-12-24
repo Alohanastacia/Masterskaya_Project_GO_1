@@ -3,3 +3,8 @@ install-lint:
 
 lint:
 	golangci-lint run ./... --config .golangci.pipeline.yaml
+
+install-uber-mock:	
+	go	install	go.uber.org/mock/mockgen@latest	
+mock-processors:	
+	mockgen	-source=internal/processors/complaints.go	-destination=internal/processors/mocks/mocks.go

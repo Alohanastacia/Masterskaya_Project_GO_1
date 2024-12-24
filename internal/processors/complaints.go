@@ -1,19 +1,34 @@
 package processors
 
-import "complaint_service/internal/repository"
+import (
+	"complaint_service/internal/entity"
+	"complaint_service/internal/repository"
+	"fmt"
+)
 
 type ComplaintsRepository interface {
 	//имплиментируются методы из repository
+	CreateComplaints(c entity.CreateComplaint) (int64, error)
 }
 
 type ComplaintsProcessor struct {
 	Authorization
+	ComplaintsRepository
 }
 
 func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsRepository) *ComplaintsProcessor {
 	return &ComplaintsProcessor{
 		Authorization: NewAuthService(complaintsRepository.Authorization),
 	}
+}
+
+func (p *ComplaintsProcessor) CreateComplaints(c entity.CreateComplaint) (int64, error) {
+
+	if c.Category == "" || c.Description == "" || c.Priority == "" {
+		return 0, fmt.Errorf("fields are not filled in")
+	}
+
+	return p.ComplaintsRepository.CreateComplaints(c)
 }
 
 // Ниже будут методы ComplaintsProcessor, которые реализуют бизнес логику вызываются из хендлеров
