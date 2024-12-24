@@ -9,5 +9,6 @@ import (
 func Complaints(app *fiber.App, complaintsHandler *handlers.ComplaintsHandler) {
 	// Пример как задавать роуты
 	//app.Get("api/v1/ping", complaintsHandler.GetComplaints)
-	//app.Post("api/v1/reports", complaintsHandler.CreateComplaints)
+	app.Get("api/v1/user/{id}", complaintsHandler.FindUsers)
+	app.Post("api/v1/reports", complaintsHandler.CreateComplaints)
 }

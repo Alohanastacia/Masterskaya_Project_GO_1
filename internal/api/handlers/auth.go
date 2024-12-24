@@ -15,7 +15,7 @@ const (
 )
 
 func (h *ComplaintsHandler) signUp(c *fiber.Ctx) {
-	var input entity.User
+	var input entity.Users
 
 	type Response struct {
 		ID     int    `json:"id"`

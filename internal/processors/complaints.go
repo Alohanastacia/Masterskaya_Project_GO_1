@@ -7,6 +7,7 @@ import (
 )
 
 type ComplaintsRepository interface {
+	FindUsers(UserUUID string) ([]*entity.Users, error)
 	//имплиментируются методы из repository
 	CreateComplaints(c entity.CreateComplaint) (int64, error)
 }
@@ -29,6 +30,10 @@ func (p *ComplaintsProcessor) CreateComplaints(c entity.CreateComplaint) (int64,
 	}
 
 	return p.ComplaintsRepository.CreateComplaints(c)
+}
+
+func (p *ComplaintsProcessor) FindUsers(UserUUID string) (entity.Users, error) {
+	return p.FindUsers(UserUUID)
 }
 
 // Ниже будут методы ComplaintsProcessor, которые реализуют бизнес логику вызываются из хендлеров

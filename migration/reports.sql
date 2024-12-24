@@ -1,20 +1,22 @@
-	/*
-	reports - таблица жалоб
-	--------------------------------------------------
-		id			порядковый номер жалобы
-		uuid 			идентификация жалобы (по ТЗ)
-		user_uuid 		индентификатор автора-пользователя
-		description	 	текст жалобы
-		priority		приоритет пока INT, а нужно ('high','medium','low')
-		stage			стадия обработки пока INT, а нужно ('new','inprogress','done', 'canceled')
-		created_at 		дата создания
-		updated_at 		дата обновления
-	*/
+/*
+reports - таблица жалоб
+--------------------------------------------------
+	priority		приоритет пока INT, а нужно ('high','medium','low')
+	stage			стадия обработки пока INT, а нужно ('new','inprogress','done', 'canceled')
+
+Оставляю поля по которым есть вопросы.
+Варианты решения: 
+1. С помощью ENUM 
+2. С помощью дополнительных таблиц и внешних ключей FOREIN KEY (...) REFERENCES ... 	
+*/
+
+-- +goose Up
+-- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS reports (
 	id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
 	uuid UUID,
 	user_uuid UUID,
-	description TEXT,
+	description VARCHAR(255),
 	priority INT,
 	stage INT,
 	created_at DATE NOT NULL DEFAULT CURRENT_DATE,
@@ -22,4 +24,10 @@ CREATE TABLE IF NOT EXISTS reports (
 );
 CREATE INDEX IF NOT EXISTS idx_created_at ON reports (created_at);
 CREATE INDEX IF NOT EXISTS idx_id ON reports (id);
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+DROP TABLE IF EXISTS reports;
+-- +goose StatementEnd
 
