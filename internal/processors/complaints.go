@@ -2,8 +2,10 @@ package processors
 
 import (
 	"complaint_service/internal/entity"
+	"complaint_service/internal/model"
 	"complaint_service/internal/repository"
 	"fmt"
+	"time"
 )
 
 type ComplaintsRepository interface {
@@ -23,13 +25,18 @@ func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsReposi
 	}
 }
 
-func (p *ComplaintsProcessor) CreateComplaints(c entity.CreateComplaint) (int64, error) {
+func (p *ComplaintsProcessor) CreateComplaints(c model.CreateComplaint) (int64, error) {
+	var res entity.CreateComplaint
 
 	if c.Category == "" || c.Description == "" || c.Priority == "" {
 		return 0, fmt.Errorf("fields are not filled in")
 	}
 
-	return p.ComplaintsRepository.CreateComplaints(c)
+	res.Category = c.Category
+	res.Created_at = time.Now()
+	res.Description = c.Description
+	res.Priority = c.Priority
+	return p.ComplaintsRepository.CreateComplaints(res)
 }
 
 func (p *ComplaintsProcessor) FindUsers(UserUUID string) (entity.Users, error) {

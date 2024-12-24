@@ -3,6 +3,7 @@ package handlers
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/logger"
+	"complaint_service/internal/model"
 	"complaint_service/internal/processors"
 
 	"log/slog"
@@ -15,7 +16,7 @@ import (
 type ComplaintsProcessor interface {
 	FindUsers(UserUUID string) (entity.Users, error)
 	//имплиментируются методы из processors
-	CreateComplaints(c entity.CreateComplaint) (int64, error)
+	CreateComplaints(c model.CreateComplaint) (int64, error)
 }
 
 type ComplaintsHandler struct {
@@ -46,7 +47,7 @@ func (h *ComplaintsHandler) InitRoutes(app *fiber.App) {
 
 func (h *ComplaintsHandler) CreateComplaints(c *fiber2.Ctx) error {
 
-	var request entity.CreateComplaint
+	var request model.CreateComplaint
 	log := logger.Log
 
 	const op = "handlers.CreateComplaints"

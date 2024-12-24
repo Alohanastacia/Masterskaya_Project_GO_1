@@ -10,7 +10,28 @@ install-lint:
 
 lint:
 	golangci-lint run ./... --config .golangci.pipeline.yaml
-	install-uber-mock:	
+
+#migrate-up применяет все схемы миграций
+migrate-up:
+	GOOSE_DRIVER=$(GOOSE_DRIVER) \
+	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
+	goose -dir $(GOOSE_MIGRATION_DIR) \
+	up
+
+#m-last-down откатывает последнюю схему миграции
+m-last-down:
+	GOOSE_DRIVER=$(GOOSE_DRIVER) \
+	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \ 
+	goose -dir $(GOOSE_MIGRATION_DIR) \
+	down
+
+#m-status проверяет статус схемы миграций
+m-status:
+	GOOSE_DRIVER=$(GOOSE_DRIVER) \
+	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
+	goose -dir $(GOOSE_MIGRATION_DIR) \
+	status
+install-uber-mock:	
 	go	install	go.uber.org/mock/mockgen@latest	
 mock-processors:	
 	mockgen	-source=internal/processors/complaints.go	-destination=internal/processors/mocks/mocks.go
