@@ -2,6 +2,7 @@ package repository
 
 import (
 	"complaint_service/internal/entity"
+	"complaint_service/internal/processors"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -50,7 +51,7 @@ func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entit
 
 	err := rows.Scan(
 		&user.UserUUID,
-		&user.UserName,
+		&user.Username,
 		&user.Email,
 		&user.Role,
 		&user.Phone,
@@ -63,6 +64,22 @@ func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entit
 	}
 
 	return []*entity.Users{&user}, nil
+}
+
+func (rep *ComplaintsDB) CreateSuperAdmin(superUser entity.SuperUser) ([]*entity.Users, error) {
+
+	var superAdmin entity.Users
+
+	superUser.Password = processors.GeneratePasswordHash(superUser.Password)
+	superUser.AdminName = processors.GenerateNameHash(superUser.AdminName)
+
+	query := "INSERT INTO users (uuid, username, password, role) VALUES ($1, $2, $3,$4) RETURNING id"
+	row := rep.db.QueryRow(query, superUser.UserUUID, superUser.AdminName, superUser.Password, entity.SuperAdmin)
+	if err := row.Scan(&superAdmin.ID); err != nil {
+		return nil, fmt.Errorf("user_uuid not found")
+	}
+
+	return []*entity.Users{&superAdmin}, nil
 }
 
 // Ниже будут методы ComplaintsRepository, которые делают запросы в БД и отдают результат

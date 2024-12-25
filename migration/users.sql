@@ -10,3 +10,9 @@ CREATE TABLE IF NOT EXISTS users(
        password VARCHAR(32)
     );
 CREATE INDEX IF NOT EXISTS idx_id ON users (id);
+-- +goose Up
+ALTER TYPE role ADD VALUE 'SUPER_ADMIN';
+
+-- +goose Down
+DROP TABLE IF EXISTS users;
+DROP TYPE IF EXISTS role;
