@@ -3,6 +3,7 @@ package handlers
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/processors"
+	"net/http"
 	"time"
 
 	fiber2 "github.com/gofiber/fiber/v2"
@@ -14,11 +15,16 @@ const (
 	StatusUpdatedMessage = "успешно обновлено"
 	ErrorInvalidRequest  = "Invalid request body"
 	ErrorUpdatingStatus  = "Error updating complaint status"
+	ErrorCommentNotFound = "Комментарий не найден"
+	ErrorDeletingComment = "Ошибка при удалении комментария"
+	//ErrorForbidden       = "Доступ запрещен"
 )
 
 type ComplaintsProcessor interface {
 	FindUsers(UserUUID string) (entity.Users, error)
 	UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error)
+	DeleteComment(complaintID string, commentID string) error
+
 	//имплиментируются методы из processors
 }
 
@@ -41,6 +47,27 @@ func (h *ComplaintsHandler) FindUsers(c *fiber2.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "UserUUID is not found"})
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+func (h *ComplaintsHandler) DeleteComment(c *fiber2.Ctx) error {
+	id := c.Params("id")
+	commentId := c.Params("commentId")
+
+	// Проверка прав администратора
+	//if !isAdmin(c) { // функция проверки прав администратора (пока не разобрался с этим)
+	//	return c.Status(http.StatusForbidden).JSON(fiber.Map{"error": ErrorForbidden})
+	//}
+
+	err := h.complaintsProcessor.DeleteComment(id, commentId)
+	if err != nil {
+		if err == entity.ErrCommentNotFound {
+			return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": ErrorCommentNotFound})
+		}
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": ErrorDeletingComment})
+	}
+
+	c.SendStatus(http.StatusNoContent) // 204 No Content
+	return nil
 }
 
 func (h *ComplaintsHandler) UpdateComplaintStatus(c *fiber2.Ctx) error {

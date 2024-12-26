@@ -1,8 +1,13 @@
 package entity
 
 import (
+	"errors"
 	uuid "github.com/satori/go.uuid"
 	"time"
+)
+
+var (
+	ErrCommentNotFound = errors.New("comment not found")
 )
 
 type Role string
@@ -44,4 +49,12 @@ type ReportsHistory struct {
 	NewStage     string    `db:"new_stage" json:"new_stage"`
 	AdminComment string    `db:"admin_comment" json:"admin_comment"`
 	ChangedAt    time.Time `db:"changed_at" json:"changed_at"`
+}
+
+type Comment struct {
+	ID          uuid.UUID `db:"id" json:"id"`
+	UserUUID    uuid.UUID `db:"user_uuid" json:"user_uuid"`
+	ComplaintID uuid.UUID `db:"complaint_id" json:"complaint_id"`
+	Text        string    `db:"comment" json:"text"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
 }

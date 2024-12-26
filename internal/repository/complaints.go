@@ -12,6 +12,7 @@ const (
 	selectComplaintQuery       = "SELECT * FROM complaints WHERE id = $1 FOR UPDATE"
 	updateComplaintStatusQuery = "UPDATE complaints SET stage = $1, updated_at = NOW() WHERE id = $2"
 	insertHistoryQuery         = "INSERT INTO reports_history (report_id, old_stage, new_stage, admin_comment) VALUES (:report_id, :old_stage, :new_stage, :admin_comment)"
+	deleteCommentQuery         = "DELETE FROM comments WHERE id = ? AND complaint_id = ?"
 )
 
 const (
@@ -112,6 +113,20 @@ func (r *ComplaintsDB) UpdateComplaintStatus(id string, status string, adminComm
 	}
 
 	return time.Time{}, nil
+}
+
+func (r *ComplaintsDB) DeleteComment(complaintID string, commentID string) error {
+	result, err := r.db.Exec(deleteCommentQuery, commentID, complaintID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return entity.ErrCommentNotFound
+	}
+
+	return nil
 }
 
 // Ниже будут методы ComplaintsRepository, которые делают запросы в БД и отдают результат
