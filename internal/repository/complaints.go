@@ -3,8 +3,15 @@ package repository
 import (
 	"complaint_service/internal/entity"
 	"fmt"
+	"time"
 
 	"github.com/jmoiron/sqlx"
+)
+
+const (
+	selectComplaintQuery       = "SELECT * FROM complaints WHERE id = $1 FOR UPDATE"
+	updateComplaintStatusQuery = "UPDATE complaints SET stage = $1, updated_at = NOW() WHERE id = $2"
+	insertHistoryQuery         = "INSERT INTO reports_history (report_id, old_stage, new_stage, admin_comment) VALUES (:report_id, :old_stage, :new_stage, :admin_comment)"
 )
 
 const (
@@ -63,6 +70,48 @@ func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entit
 	}
 
 	return []*entity.Users{&user}, nil
+}
+
+func (r *ComplaintsDB) UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error) {
+	var complaint entity.Complaint
+
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err = tx.Get(&complaint, selectComplaintQuery, id); err != nil {
+		return time.Time{}, err
+	}
+
+	oldStage := complaint.Stage
+
+	if _, err = tx.Exec(updateComplaintStatusQuery, status, id); err != nil {
+		return time.Time{}, err
+	}
+
+	history := entity.ReportsHistory{
+		ReportID:     complaint.ID,
+		OldStage:     oldStage,
+		NewStage:     status,
+		AdminComment: adminComment,
+	}
+
+	if _, err = tx.NamedExec(insertHistoryQuery, history); err != nil {
+		return time.Time{}, err
+	}
+
+	if err = tx.Commit(); err != nil {
+		return time.Time{}, err
+	}
+
+	return time.Time{}, nil
 }
 
 // Ниже будут методы ComplaintsRepository, которые делают запросы в БД и отдают результат

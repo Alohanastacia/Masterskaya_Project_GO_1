@@ -3,14 +3,22 @@ package handlers
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/processors"
+	"time"
 
 	fiber2 "github.com/gofiber/fiber/v2"
 
 	"github.com/gofiber/fiber"
 )
 
+const (
+	StatusUpdatedMessage = "успешно обновлено"
+	ErrorInvalidRequest  = "Invalid request body"
+	ErrorUpdatingStatus  = "Error updating complaint status"
+)
+
 type ComplaintsProcessor interface {
 	FindUsers(UserUUID string) (entity.Users, error)
+	UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error)
 	//имплиментируются методы из processors
 }
 
@@ -33,6 +41,26 @@ func (h *ComplaintsHandler) FindUsers(c *fiber2.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "UserUUID is not found"})
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+func (h *ComplaintsHandler) UpdateComplaintStatus(c *fiber2.Ctx) error {
+	id := c.Params("id")
+
+	var request entity.Request
+
+	if err := c.BodyParser(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": ErrorInvalidRequest})
+	}
+
+	updatedAt, err := h.complaintsProcessor.UpdateComplaintStatus(id, request.Status, request.AdminComment)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": ErrorUpdatingStatus})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status":     StatusUpdatedMessage,
+		"updated_at": updatedAt.Format(time.RFC3339),
+	})
 }
 
 // Функция InitRoutes инициализирует роуты. Принимает на вход переменную типа fiber.App
