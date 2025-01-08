@@ -31,3 +31,10 @@ m-status:
 	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
 	goose -dir $(GOOSE_MIGRATION_DIR) \
 	status
+
+#m-create создает новый файл миграции с заданным именем
+m-create:
+	GOOSE_DRIVER=$(GOOSE_DRIVER) \
+	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
+	goose -dir $(GOOSE_MIGRATION_DIR) \
+	create create_$(name) sql

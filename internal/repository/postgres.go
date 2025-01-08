@@ -9,7 +9,7 @@ import (
 
 func NewPostgresDB() (*sqlx.DB, error) {
 	dbConnectString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		"localhost", "5432", "postgres", "complaint_service", "qwerty", "disable")
+		"localhost", "5432", "postgres", "postgres", "postgres", "disable")
 
 	db, err := sqlx.Open("postgres", dbConnectString)
 	if err != nil {

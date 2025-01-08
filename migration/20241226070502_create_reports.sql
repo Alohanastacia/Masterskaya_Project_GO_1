@@ -27,7 +27,5 @@ CREATE INDEX IF NOT EXISTS idx_id ON reports (id);
 -- +goose StatementEnd
 
 -- +goose Down
--- +goose StatementBegin
 DROP TABLE IF EXISTS reports;
--- +goose StatementEnd
 
