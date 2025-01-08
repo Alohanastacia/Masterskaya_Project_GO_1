@@ -1,8 +1,6 @@
-version: "3.9"
-
 services:
   postgres:
-    container_name: postgres_container_report_service
+    container_name: postgres_complaint_service_2
     image: postgres:15-alpine
     environment:
       POSTGRES_DB: ${DB_DBNAME}
@@ -11,18 +9,13 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - "${DB_PORT}:5432"
     networks:
       - postgres
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 1G
 
   pgadmin:
-    container_name: pgadmin_container_report_service
+    container_name: pgadmin_complaint_service_1
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
@@ -31,20 +24,15 @@ services:
     volumes:
       - pgadmin:/var/lib/pgadmin
     ports:
-      - "5051:80"
+      - "5050:80"
     networks:
       - postgres
     restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 1G
 
   app:
     build:
-      context: . 
-      dockerfile: Dockerfile  # Dockerfile для сборки контейнера в находится корневом каталоге
+      context: .
+      dockerfile: ./Dockerfile
     ports:
       - "${APP_PORT}:${APP_PORT}"
     environment:
