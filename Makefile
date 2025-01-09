@@ -5,9 +5,6 @@ GOOSE_MIGRATION_DIR=./migration #путь к миграциям
 #строка подключения к БД
 GOOSE_DBSTRING=://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_DBNAME)?sslmode=$(SSL_MODE)
 
-run:
-	go run cmd/main.go
-
 install-lint:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
 
@@ -35,8 +32,10 @@ m-status:
 	goose -dir $(GOOSE_MIGRATION_DIR) \
 	status
 
+#build создаёт образ по docker-compose-файлу
 build:
 	docker-compose build 
 
+#run-local запускает контейнеры по docker-compose-файлу
 run-local:
-	docker-compose up -d
+	docker-compose up
