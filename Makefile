@@ -16,38 +16,38 @@ install-lint:
 lint:
 	golangci-lint run ./... --config .golangci.pipeline.yaml
 
-#migrate-up применяет все схемы миграций
+# migrate-up применяет все схемы миграций
 migrate-up:
 	GOOSE_DRIVER=$(GOOSE_DRIVER) \
 	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
 	goose -dir $(GOOSE_MIGRATION_DIR) \
 	up
 
-#m-last-down откатывает последнюю схему миграции
+# migrate-down откатывает последнюю схему миграции
 migrate-down:
 	GOOSE_DRIVER=$(GOOSE_DRIVER) \
 	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
 	goose -dir $(GOOSE_MIGRATION_DIR) \
 	down
 
-#m-status проверяет статус схемы миграций
+# migrate-status проверяет статус схемы миграций
 migrate-status:
 	GOOSE_DRIVER=$(GOOSE_DRIVER) \
 	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
 	goose -dir $(GOOSE_MIGRATION_DIR) \
 	status
 
-#m-create создает новый файл миграции с заданным именем
+# migrate-create создает новый файл миграции с заданным именем
 migrate-create:
 	GOOSE_DRIVER=$(GOOSE_DRIVER) \
 	GOOSE_DBSTRING=$(GOOSE_DBSTRING) \
 	goose -dir $(GOOSE_MIGRATION_DIR) \
 	create create_$(name) sql
 
-#build создаёт образ по docker-compose-файлу
+# build создаёт образ по docker-compose-файлу
 build:
 	docker-compose build 
 
-#run-local запускает контейнеры по docker-compose-файлу
+# run-local запускает контейнеры по docker-compose-файлу
 run-local:
 	docker-compose up
