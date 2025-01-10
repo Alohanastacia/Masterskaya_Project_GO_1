@@ -1,15 +1,3 @@
-/*
-reports - таблица жалоб
---------------------------------------------------
-	priority		приоритет пока INT, а нужно ('high','medium','low')
-	stage			стадия обработки пока INT, а нужно ('new','inprogress','done', 'canceled')
-
-Оставляю поля по которым есть вопросы.
-Варианты решения: 
-1. С помощью ENUM 
-2. С помощью дополнительных таблиц и внешних ключей FOREIN KEY (...) REFERENCES ... 	
-*/
-
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS reports (
@@ -29,3 +17,14 @@ CREATE INDEX IF NOT EXISTS idx_id ON reports (id);
 -- +goose Down
 DROP TABLE IF EXISTS reports;
 
+/*
+reports - таблица жалоб
+--------------------------------------------------
+	priority		приоритет пока INT, а нужно ('high','medium','low')
+	stage			стадия обработки пока INT, а нужно ('new','inprogress','done', 'canceled')
+
+Оставляю поля по которым есть вопросы.
+Варианты решения: 
+1. С помощью ENUM 
+2. С помощью дополнительных таблиц и внешних ключей FOREIN KEY (...) REFERENCES ... 	
+*/
