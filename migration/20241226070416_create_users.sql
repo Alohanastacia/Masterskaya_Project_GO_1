@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 CREATE TYPE role AS ENUM ('USER', 'ADMIN');
 
 CREATE TABLE IF NOT EXISTS users(
@@ -10,9 +12,10 @@ CREATE TABLE IF NOT EXISTS users(
        password VARCHAR(32)
     );
 CREATE INDEX IF NOT EXISTS idx_id ON users (id);
--- +goose Up
-ALTER TYPE role ADD VALUE 'SUPER_ADMIN';
+-- +goose StatementEnd
 
 -- +goose Down
-DROP TABLE IF EXISTS users;
+-- +goose StatementBegin
+DROP TABLE IF EXISTS users CASCADE;
 DROP TYPE IF EXISTS role;
+-- +goose StatementEnd
