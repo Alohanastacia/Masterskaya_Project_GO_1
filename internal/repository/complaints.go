@@ -71,7 +71,6 @@ func (rep *ComplaintsDB) CreateSuperAdmin(superUser entity.SuperUser) ([]*entity
 	var superAdmin entity.Users
 
 	superUser.Password = processors.GeneratePasswordHash(superUser.Password)
-	superUser.AdminName = processors.GenerateNameHash(superUser.AdminName)
 
 	query := "INSERT INTO users (uuid, username, password, role) VALUES ($1, $2, $3,$4) RETURNING id"
 	row := rep.db.QueryRow(query, superUser.UserUUID, superUser.AdminName, superUser.Password, entity.SuperAdmin)

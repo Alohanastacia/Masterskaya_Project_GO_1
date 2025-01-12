@@ -3,6 +3,8 @@ package processors
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/repository"
+
+	//"complaint_service/internal/repository"
 	"crypto/sha256"
 	"fmt"
 
@@ -10,7 +12,6 @@ import (
 )
 
 const salt = "afdafadfadfadf"
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 type Authorization interface {
 	CreateUser(user entity.Users) (int, error)
@@ -47,10 +48,4 @@ func GeneratePasswordHash(password string) string {
 	hash.Write([]byte(password))
 
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
-}
-
-func GenerateNameHash(name string) string {
-	hash := sha256.New()
-	hash.Write([]byte(name))
-	return fmt.Sprintf("%x", hash.Sum([]byte(charset)))
 }
