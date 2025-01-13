@@ -22,11 +22,11 @@ DROP TYPE IF EXISTS role;
 
 -- +goose Up
 -- +goose StatementBegin
-ALTER TABLE user(CREATE role SuperAdmin WITH role 'Cap' WITH LOGIN PASSWORD 'pwd' CREATEROLE);
+CREATE ROLE SuperAdmin WITH LOGIN PASSWORD 'pwd' CREATEROLE;
 -- +goose StatementEnd
 -- + goose Down
 -- +goose StatementBegin
-ALTER TABLE user DELETE FROM users WHERE username = 'Cap';;
+DROP role SuperAdmin
 -- +goose StatementEnd
 
 /*

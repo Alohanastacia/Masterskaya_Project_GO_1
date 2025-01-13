@@ -2,7 +2,6 @@ package repository
 
 import (
 	"complaint_service/internal/entity"
-	"complaint_service/internal/processors"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"

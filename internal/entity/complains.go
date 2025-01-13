@@ -19,11 +19,3 @@ type Users struct {
 	Phone    string    `db:"phone" json:"phone"`
 	Role     Role      `db:"role" json:"role"`
 }
-
-type SuperUser struct {
-	ID        uint      `db:"id" json:"id"`
-	UserUUID  uuid.UUID `db:"user_UUID" json:"user_UUID"`
-	AdminName string    `db:"admin_name" json:"admin_name"`
-	Password  string    `db:"password" json:"password"`
-	Role      Role      `db:"role" json:"role"`
-}
