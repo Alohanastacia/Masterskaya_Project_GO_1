@@ -22,11 +22,6 @@ type Users struct {
 	Role     Role      `db:"role" json:"role"`
 }
 
-type Request struct {
-	Status       string `json:"status"`
-	AdminComment string `json:"admin_comment"`
-}
-
 type Complaint struct {
 	ID          uuid.UUID `db:"id" json:"id"`
 	UserUUID    uuid.UUID `db:"user_uuid" json:"user_uuid"`

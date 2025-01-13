@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"complaint_service/internal/entity"
+	"complaint_service/internal/models"
 	"complaint_service/internal/processors"
 	"time"
 
@@ -46,20 +47,19 @@ func (h *ComplaintsHandler) FindUsers(c *fiber2.Ctx) error {
 func (h *ComplaintsHandler) UpdateComplaintStatus(c *fiber2.Ctx) error {
 	id := c.Params("id")
 
-	var request entity.Request
-
+	var request models.Request
 	if err := c.BodyParser(&request); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": ErrorInvalidRequest})
+		return c.Status(fiber.StatusBadRequest).JSON(models.ErrorResponse{Error: ErrorInvalidRequest})
 	}
 
 	updatedAt, err := h.complaintsProcessor.UpdateComplaintStatus(id, request.Status, request.AdminComment)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": ErrorUpdatingStatus})
+		return c.Status(fiber.StatusInternalServerError).JSON(models.ErrorResponse{Error: ErrorUpdatingStatus})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"status":     StatusUpdatedMessage,
-		"updated_at": updatedAt.Format(time.RFC3339),
+	return c.Status(fiber.StatusOK).JSON(models.UpdateStatusResponse{
+		Status:    StatusUpdatedMessage,
+		UpdatedAt: updatedAt.Format(time.RFC3339),
 	})
 }
 
