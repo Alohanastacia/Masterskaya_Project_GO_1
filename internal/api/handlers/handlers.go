@@ -18,8 +18,8 @@ type ComplaintsHandler struct {
 	complaintsProcessor *processors.ComplaintsProcessor
 }
 
-func CreateComplaintsHandler(complaintsProcessor ComplaintsProcessor) *ComplaintsHandler {
-	return &ComplaintsHandler{}
+func CreateComplaintsHandler(complaintsProcessor *processors.ComplaintsProcessor) *ComplaintsHandler {
+	return &ComplaintsHandler{complaintsProcessor: complaintsProcessor}
 }
 
 // Ниже будут методы-хендлеры. Вызывают через интерфейс ComplaintsProcessor нужные методы бизнес логики
@@ -34,8 +34,7 @@ func (h *ComplaintsHandler) FindUsers(c *fiber2.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
 }
-
-// Функция InitRoutes инициализирует роуты. Принимает на вход переменную типа fiber.App
 func (h *ComplaintsHandler) InitRoutes(app *fiber.App) {
 	app.Post("user/register", h.signUp)
+	app.Post("user/login", h.signIn)
 }

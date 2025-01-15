@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"complaint_service/internal/entity"
+	"complaint_service/internal/models"
 	"fmt"
 	"log"
 
@@ -10,22 +10,17 @@ import (
 
 const (
 	successfulReg = "успешная регистрация"
-	badRequest    = "неправильные данные запроса"
-	serverError   = "ошибка севера"
+	badRequest    = "incorrect request"
+	serverError   = "ошибка сервера"
 )
 
 func (h *ComplaintsHandler) signUp(c *fiber.Ctx) {
-	var input entity.Users
-
-	type Response struct {
-		ID     int    `json:"id"`
-		Status string `json:"status"`
-	}
+	var input models.UserSignUp
 
 	if err := c.BodyParser(&input); err != nil {
 		err = c.Status(fiber.StatusBadRequest).JSONP(
-			Response{
-				ID:     0,
+			models.ResponseSignUp{
+				Id:     0,
 				Status: badRequest,
 			})
 		if err != nil {
@@ -38,8 +33,8 @@ func (h *ComplaintsHandler) signUp(c *fiber.Ctx) {
 
 	if err != nil {
 		err = c.Status(fiber.StatusInternalServerError).JSONP(
-			Response{
-				ID:     0,
+			models.ResponseSignUp{
+				Id:     0,
 				Status: fmt.Sprintf("%v: %v", serverError, err),
 			})
 		if err != nil {
@@ -49,8 +44,45 @@ func (h *ComplaintsHandler) signUp(c *fiber.Ctx) {
 	}
 
 	err = c.Status(fiber.StatusOK).JSONP(
-		Response{
-			ID:     id,
+		models.ResponseSignUp{
+			Id:     id,
+			Status: successfulReg,
+		})
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func (h *ComplaintsHandler) signIn(c *fiber.Ctx) {
+	var input models.UserSignUp
+
+	if err := c.BodyParser(&input); err != nil {
+		err = c.Status(fiber.StatusBadRequest).JSONP(
+			models.ResponseSignIn{
+				Token:  "",
+				Status: badRequest,
+			})
+		if err != nil {
+			log.Println(err)
+		}
+		return
+	}
+	token, err := h.complaintsProcessor.Authorization.GetToken(input.UserName, input.Password)
+	if err != nil {
+		err = c.Status(fiber.StatusInternalServerError).JSONP(
+			models.ResponseSignIn{
+				Token:  "",
+				Status: fmt.Sprintf("%v: %v", serverError, err),
+			})
+		if err != nil {
+			log.Println(err)
+		}
+		return
+	}
+
+	err = c.Status(fiber.StatusOK).JSONP(
+		models.ResponseSignIn{
+			Token:  token,
 			Status: successfulReg,
 		})
 	if err != nil {

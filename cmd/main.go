@@ -25,6 +25,7 @@ func main() {
 	*/
 
 	cfg := config.NewConfig()
+
 	str := slog.String("env", cfg.Env)
 	l.SetupLogger(cfg.Env)
 	l.Log.Info("Starting project", str)
@@ -63,4 +64,5 @@ func main() {
 	if err := app.Listen(port); err != nil {
 		l.Log.Error("Server startup error: %v", err)
 	}
+
 }

@@ -14,6 +14,7 @@ type ComplaintsProcessor struct {
 	Authorization
 }
 
+// CreateComplaintsProcessor является конструктором структуры ComplaintsProcessor. Принимает на вход переменную типа sqlx.DB и возвращает ComplaintsProcessor
 func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsRepository) *ComplaintsProcessor {
 	return &ComplaintsProcessor{
 		Authorization: NewAuthService(complaintsRepository.Authorization),

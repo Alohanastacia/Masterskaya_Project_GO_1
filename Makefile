@@ -6,6 +6,11 @@ SSL_MODE=disable
 GOOSE_MIGRATION_DIR=./migration 
 #тип СУБД
 DB_TYPE=postgres
+DB_HOST = localhost
+DB_PORT = 5432
+DB_USER = postgres
+DB_PASSWORD = postgres
+DB_DBNAME = postgres
 
 #строка подключения к БД
 GOOSE_DBSTRING=$(DB_TYPE)://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_DBNAME)?sslmode=$(SSL_MODE)
