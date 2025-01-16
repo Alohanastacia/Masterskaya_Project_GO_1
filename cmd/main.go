@@ -8,7 +8,7 @@ import (
 	"complaint_service/internal/repository"
 	"log/slog"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 )
 

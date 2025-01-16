@@ -7,9 +7,9 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"github.com/golang-jwt/jwt"
 	"time"
 
-	"github.com/golang-jwt/jwt"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -33,20 +33,16 @@ type AuthService struct {
 	SessionCache repository.SessionCache
 }
 
-// NewAuthService является конструктором структуры AuthService. Принимает на вход переменную типа repository.Authorization и возвращает AuthService
+// NewAuthService является конструктором структуры AuthService.
 func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{
 		repo:         repo,
-		SessionCache: *repository.NewSessionCache()}
+		SessionCache: *repository.NewSessionCache(),
+	}
 }
 
-/*
-CreateUser проверяет на корректность полученные от пользователя данные и вызывает функцию
-repo.CreateUser для создания пользователя. Принимает на вход структуру User,
-возвращает id типа int и ошибку типа error
-*/
 func (s *AuthService) CreateUser(user models.UserSignUp) (int, error) {
-	user.UserUUID = uuid.NewV4()
+	user.UserUUID = uuid.NewV4() // Приведение к строке
 	if len(user.Password) == 0 || len(user.UserName) == 0 {
 		return 0, fmt.Errorf("имя пользователя или пароль не могут быть пустыми")
 	}
@@ -54,15 +50,12 @@ func (s *AuthService) CreateUser(user models.UserSignUp) (int, error) {
 	return s.repo.CreateUser(user)
 }
 
-/*
-GenerateToken генерирует JWT токен пользователя. Принимает на вход структуру username и password,
-возвращает JWT токен типа string и ошибку.
-*/
 func (s *AuthService) GenerateToken(username, password string) (string, error) {
 	configs, err := config.LoadEnv()
 	if err != nil {
-		fmt.Println(err)
+		return "", fmt.Errorf("ошибка загрузки конфигурации: %v", err)
 	}
+
 	user, err := s.repo.GetUser(username, generatePasswordHash(password))
 	if err != nil {
 		return "", err
@@ -72,6 +65,8 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
+			Issuer:    user.UserUUID.String(),
+			Audience:  username,
 		},
 		user.UserUUID,
 	})
@@ -79,24 +74,21 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 	return token.SignedString([]byte(configs.JwtSigningKey))
 }
 
-/*
-GetToken получает JWT токен из функции GetToken и сохраняет в кеш. Принимает на вход структуру username и password,
-возвращает JWT токен типа string и ошибку.
-*/
 func (s *AuthService) GetToken(username, password string) (string, error) {
 	if len(password) == 0 || len(username) == 0 {
 		return "", fmt.Errorf("имя пользователя или пароль не могут быть пустыми")
 	}
+
 	token, err := s.GenerateToken(username, password)
 	if err != nil {
 		return "", err
 	}
 
-	password = generatePasswordHash(password)
+	passwordHash := generatePasswordHash(password)
 
 	value, err := json.Marshal(&models.UserSessions{
 		Username:  username,
-		Password:  password,
+		Password:  passwordHash,
 		CreatedAt: time.Now(),
 	})
 
@@ -104,13 +96,14 @@ func (s *AuthService) GetToken(username, password string) (string, error) {
 		return "", err
 	}
 
-	err = s.SessionCache.Set(token, value, int32(expiration))
-	if err != nil {
+	if err := s.SessionCache.Set(token, value, int32(expiration)); err != nil {
 		return "", err
 	}
 
 	return token, nil
 }
+
+// Остальные методы остаются без изменений...
 
 func (s *AuthService) ParseToken(token string) (uuid.UUID, error) {
 	result, err := s.SessionCache.Get(token)

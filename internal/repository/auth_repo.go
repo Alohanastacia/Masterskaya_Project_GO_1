@@ -17,15 +17,12 @@ type AuthPostgres struct {
 	db *sqlx.DB
 }
 
-// NewAuthPostgres является конструктором структуры AuthPostgres. Принимает на вход переменную типа sqlx.DB и возвращает AuthPostgres
+// NewAuthPostgres является конструктором структуры AuthPostgres.
 func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }
 
-/*
-CreateUser отправляет INSERT запрос в базу данных для создания пользователя. Принимает на вход структуру User,
-возвращает переменные id типа int и err типа error
-*/
+// CreateUser отправляет INSERT запрос в базу данных для создания пользователя.
 func (r *AuthPostgres) CreateUser(userModel models.UserSignUp) (int, error) {
 	var id int
 
@@ -40,25 +37,32 @@ func (r *AuthPostgres) CreateUser(userModel models.UserSignUp) (int, error) {
 		UserUUID: userModel.UserUUID,
 		Role:     entity.Role(models.User),
 	}
-	query := fmt.Sprintf("INSERT INTO users (user_uuid,username,password,role) values($1,$2,$3,$4) RETURNING id")
+
+	query := `INSERT INTO users (user_uuid, username, password, role) VALUES ($1,$2,$3,$4) RETURNING id`
+
 	row := tx.QueryRow(query, user.UserUUID, user.UserName, user.Password, user.Role)
+
 	if err := row.Scan(&id); err != nil {
 		tx.Rollback()
 		return 0, err
 	}
-	tx.Commit()
+
+	if err := tx.Commit(); err != nil { // Убедитесь в успешном коммите транзакции.
+		return 0, err
+	}
 
 	return id, nil
 }
 
-/*
-GetUser отправляет SELECT запрос в базу данных для получения данных пользователя. Принимает на вход username и password,
-возвращает структуру User и ошибку типа error
-*/
+// GetUser отправляет SELECT запрос в базу данных для получения данных пользователя.
 func (r *AuthPostgres) GetUser(username, password string) (entity.Users, error) {
 	var user entity.Users
-	query := fmt.Sprintf("SELECT id FROM %s WHERE username=$1 AND password=$2", usersTable)
-	err := r.db.Get(&user, query, username, password)
 
-	return user, err
+	query := `SELECT user_uuid FROM users WHERE username=$1 AND password=$2`
+
+	if err := r.db.Get(&user, query, username, password); err != nil {
+		return entity.Users{}, fmt.Errorf("пользователь не найден")
+	}
+
+	return user, nil
 }
