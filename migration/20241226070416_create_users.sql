@@ -19,19 +19,3 @@ CREATE INDEX IF NOT EXISTS idx_id ON users (id);
 DROP TABLE IF EXISTS users CASCADE;
 DROP TYPE IF EXISTS role;
 -- +goose StatementEnd
-
--- +goose Up
--- +goose StatementBegin
-CREATE ROLE SuperAdmin WITH LOGIN PASSWORD 'pwd' CREATEROLE;
--- +goose StatementEnd
--- + goose Down
--- +goose StatementBegin
-DROP role SuperAdmin
--- +goose StatementEnd
-
-/*
- Талица users.
- 1. Добавлена вторая миграция. Создание супер администратора с логином и паролем.
- Определены его права выдавать роль администратора.
-
- */
