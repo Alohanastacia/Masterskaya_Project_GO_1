@@ -3,11 +3,12 @@ package processors
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/repository"
+	"github.com/satori/go.uuid"
 	"time"
 )
 
 type ComplaintsRepository interface {
-	FindUsers(UserUUID string) (*entity.Users, error)
+	FindUsers(UserUUID uuid.UUID) (*entity.Users, error)
 	UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error)
 	DeleteComment(complaintID string, commentID string) error
 	UpdateComplaintPriority(id string, priority string) (time.Time, error)
@@ -26,8 +27,7 @@ func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsReposi
 	}
 }
 
-// FindUsers ищет пользователя по UserUUID и возвращает его данные.
-func (p *ComplaintsProcessor) FindUsers(UserUUID string) (entity.Users, error) {
+func (p *ComplaintsProcessor) FindUsers(UserUUID uuid.UUID) (entity.Users, error) {
 	user, err := p.repo.FindUsers(UserUUID)
 	if err != nil {
 		return entity.Users{}, err // Возвращаем пустую структуру в случае ошибки

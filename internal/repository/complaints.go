@@ -4,6 +4,7 @@ import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/models"
 	"fmt"
+	"github.com/satori/go.uuid"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -34,16 +35,15 @@ func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 	}
 }
 
-func (rep *ComplaintsRepository) FindUsers(UserUUID string) (*entity.Users, error) {
-
+func (r *ComplaintsRepository) FindUsers(UserUUID uuid.UUID) (*entity.Users, error) {
 	var user entity.Users
 
-	if UserUUID == "" {
+	if UserUUID == uuid.Nil {
 		return nil, fmt.Errorf("user_uuid is required")
 	}
 
 	const query = `SELECT user_uuid, username, email, role, phone FROM users WHERE user_uuid = $1`
-	row := rep.db.QueryRow(query, UserUUID)
+	row := r.db.QueryRow(query, UserUUID.String())
 
 	err := row.Scan(
 		&user.UserUUID,
@@ -59,6 +59,7 @@ func (rep *ComplaintsRepository) FindUsers(UserUUID string) (*entity.Users, erro
 
 	return &user, nil // Возвращаем указатель на найденного пользователя
 }
+
 func (r *ComplaintsRepository) UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error) {
 	var complaint entity.Complaint
 

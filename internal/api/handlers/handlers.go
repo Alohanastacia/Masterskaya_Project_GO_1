@@ -3,7 +3,8 @@ package handlers
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/models"
-	fiber "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
+	"github.com/satori/go.uuid"
 	"time"
 )
 
@@ -19,7 +20,7 @@ const (
 )
 
 type ComplaintsProcessor interface {
-	FindUsers(UserUUID string) (entity.Users, error)
+	FindUsers(UserUUID uuid.UUID) (entity.Users, error)
 	CreateUser(user models.UserSignUp) (int, error)
 	GetToken(username, password string) (string, error)
 	UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error)
@@ -36,8 +37,13 @@ func CreateComplaintsHandler(complaintsProcessor ComplaintsProcessor) *Complaint
 }
 
 func (h *ComplaintsHandler) FindUsers(c *fiber.Ctx) error {
-	UserUUID := c.Params("id")
-	res, err := h.complaintsProcessor.FindUsers(UserUUID)
+	userUUIDStr := c.Params("id")
+	userUUID, err := uuid.FromString(userUUIDStr)
+	if err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid UUID format")
+	}
+
+	res, err := h.complaintsProcessor.FindUsers(userUUID)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, "UserUUID not found")
 	}
