@@ -42,7 +42,7 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 }
 
 func (s *AuthService) CreateUser(user models.UserSignUp) (int, error) {
-	user.UserUUID = uuid.NewV4() // Приведение к строке
+	user.UserUUID = uuid.NewV4()
 	if len(user.Password) == 0 || len(user.UserName) == 0 {
 		return 0, fmt.Errorf("имя пользователя или пароль не могут быть пустыми")
 	}
@@ -102,8 +102,6 @@ func (s *AuthService) GetToken(username, password string) (string, error) {
 
 	return token, nil
 }
-
-// Остальные методы остаются без изменений...
 
 func (s *AuthService) ParseToken(token string) (uuid.UUID, error) {
 	result, err := s.SessionCache.Get(token)

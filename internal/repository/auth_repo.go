@@ -47,7 +47,7 @@ func (r *AuthPostgres) CreateUser(userModel models.UserSignUp) (int, error) {
 		return 0, err
 	}
 
-	if err := tx.Commit(); err != nil { // Убедитесь в успешном коммите транзакции.
+	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
 

@@ -30,9 +30,9 @@ func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsReposi
 func (p *ComplaintsProcessor) FindUsers(UserUUID uuid.UUID) (entity.Users, error) {
 	user, err := p.repo.FindUsers(UserUUID)
 	if err != nil {
-		return entity.Users{}, err // Возвращаем пустую структуру в случае ошибки
+		return entity.Users{}, err
 	}
-	return *user, nil // Возвращаем найденного пользователя
+	return *user, nil
 }
 
 func (p *ComplaintsProcessor) UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error) {
