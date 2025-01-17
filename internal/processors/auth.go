@@ -5,10 +5,10 @@ import (
 	"complaint_service/internal/models"
 	"complaint_service/internal/repository"
 
-
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -61,13 +61,18 @@ GenerateToken генерирует JWT токен пользователя. Пр
 возвращает JWT токен типа string и ошибку.
 */
 func (s *AuthService) GenerateToken(username, password string) (string, error) {
+	op := "GenerateToken"
+	log.Println("Начало: ", op)
+
 	configs, err := config.LoadEnv()
 	if err != nil {
 		fmt.Println(err)
 	}
+	//user.Password = generatePasswordHash(user.Password)
 	user, err := s.repo.GetUser(username, generatePasswordHash(password))
 	if err != nil {
-		return "", err
+		log.Printf("%s: %s", op, err)
+		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
@@ -86,13 +91,20 @@ GetToken получает JWT токен из функции GetToken и сох�
 возвращает JWT токен типа string и ошибку.
 */
 func (s *AuthService) GetToken(username, password string) (string, error) {
+	op := "GetToken"
+	log.Println("Старт", op)
+
 	if len(password) == 0 || len(username) == 0 {
 		return "", fmt.Errorf("имя пользователя или пароль не могут быть пустыми")
 	}
+	log.Printf("проверка входных данных выполнена: username=%s, password=%s\n",
+		username, password)
+
 	token, err := s.GenerateToken(username, password)
 	if err != nil {
 		return "", err
 	}
+	log.Println("Токен сгенерирован", op)
 
 	password = generatePasswordHash(password)
 
@@ -105,11 +117,13 @@ func (s *AuthService) GetToken(username, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	log.Println("Объект для мемкеша создан:", op)
 
 	err = s.SessionCache.Set(token, value, int32(expiration))
 	if err != nil {
 		return "", err
 	}
+	log.Println("Объект помещён в мемкеш:", op)
 
 	return token, nil
 }
@@ -165,7 +179,7 @@ func generatePasswordHash(password string) string {
 		fmt.Println(err)
 	}
 	hash := sha256.New()
-	hash.Write([]byte(password))
+	hash.Write([]byte(password + configs.JwtSalt))
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+	return fmt.Sprintf("%x", hash.Sum(nil))
 }

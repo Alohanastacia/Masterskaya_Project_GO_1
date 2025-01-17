@@ -50,7 +50,7 @@ func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entit
 
 	err := rows.Scan(
 		&user.UserUUID,
-		&user.Username,
+		&user.UserName,
 		&user.Email,
 		&user.Role,
 		&user.Phone,
