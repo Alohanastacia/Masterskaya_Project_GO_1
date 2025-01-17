@@ -22,8 +22,6 @@ const (
 
 type ComplaintsProcessor interface {
 	FindUsers(UserUUID uuid.UUID) (entity.Users, error)
-	//CreateUser(user models.UserSignUp) (int, error)
-	//GetToken(username, password string) (string, error)
 	UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error)
 	DeleteComment(complaintID string, commentID string) error
 	UpdateComplaintPriority(id string, priority string) (time.Time, error)
