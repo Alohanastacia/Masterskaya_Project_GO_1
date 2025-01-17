@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -35,3 +36,17 @@ type UserSignUp struct {
 	Password string    `json:"password"`
 	Role     Role      `json:"role"`
 }
+
+type Request struct {
+	Status       string `json:"status"`
+	AdminComment string `json:"admin_comment"`
+}
+
+type UpdateStatusResponse struct {
+	Status    string `json:"status"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+var (
+	ErrCommentNotFound = errors.New("comment not found")
+)
