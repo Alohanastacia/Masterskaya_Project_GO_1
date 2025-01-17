@@ -3,6 +3,7 @@ package handlers
 import (
 	"complaint_service/internal/entity"
 	"complaint_service/internal/models"
+	"complaint_service/internal/processors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/satori/go.uuid"
 	"time"
@@ -21,18 +22,18 @@ const (
 
 type ComplaintsProcessor interface {
 	FindUsers(UserUUID uuid.UUID) (entity.Users, error)
-	CreateUser(user models.UserSignUp) (int, error)
-	GetToken(username, password string) (string, error)
+	//CreateUser(user models.UserSignUp) (int, error)
+	//GetToken(username, password string) (string, error)
 	UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error)
 	DeleteComment(complaintID string, commentID string) error
 	UpdateComplaintPriority(id string, priority string) (time.Time, error)
 }
 
 type ComplaintsHandler struct {
-	complaintsProcessor ComplaintsProcessor
+	complaintsProcessor *processors.ComplaintsProcessor
 }
 
-func CreateComplaintsHandler(complaintsProcessor ComplaintsProcessor) *ComplaintsHandler {
+func CreateComplaintsHandler(complaintsProcessor *processors.ComplaintsProcessor) *ComplaintsHandler {
 	return &ComplaintsHandler{complaintsProcessor: complaintsProcessor}
 }
 
@@ -122,8 +123,8 @@ func (h *ComplaintsHandler) UpdateComplaintPriority(c *fiber.Ctx) error {
 
 // InitRoutes инициализирует маршруты
 func (h *ComplaintsHandler) InitRoutes(app *fiber.App) {
-	app.Post("/api/v1/user/register", h.signUp)
-	app.Post("/api/v1/user/login", h.signIn)
+	app.Post("user/register", h.signUp)
+	app.Post("user/login", h.signIn)
 	app.Get("/api/v1/user/:id", h.FindUsers)
 	app.Put("api/v1/reports/:id", h.UpdateComplaintStatus)
 	app.Delete("/reports/:id/comments/:commentId", h.DeleteComment)

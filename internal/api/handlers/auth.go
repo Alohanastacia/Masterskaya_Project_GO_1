@@ -29,7 +29,7 @@ func (h *ComplaintsHandler) signUp(c *fiber.Ctx) {
 		return
 	}
 
-	id, err := h.complaintsProcessor.CreateUser(input)
+	id, err := h.complaintsProcessor.Authorization.CreateUser(input)
 
 	if err != nil {
 		err = c.Status(fiber.StatusInternalServerError).JSONP(
@@ -67,7 +67,7 @@ func (h *ComplaintsHandler) signIn(c *fiber.Ctx) {
 		}
 		return
 	}
-	token, err := h.complaintsProcessor.GetToken(input.UserName, input.Password)
+	token, err := h.complaintsProcessor.Authorization.GetToken(input.UserName, input.Password)
 	if err != nil {
 		err = c.Status(fiber.StatusInternalServerError).JSONP(
 			models.ResponseSignIn{

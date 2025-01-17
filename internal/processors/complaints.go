@@ -17,19 +17,19 @@ type ComplaintsRepository interface {
 
 type ComplaintsProcessor struct {
 	Authorization
-	repo ComplaintsRepository
+	complaintsRepository *repository.ComplaintsRepository
 }
 
 // CreateComplaintsProcessor является конструктором структуры ComplaintsProcessor.
 func CreateComplaintsProcessor(complaintsRepository *repository.ComplaintsRepository) *ComplaintsProcessor {
 	return &ComplaintsProcessor{
-		Authorization: NewAuthService(complaintsRepository.Authorization),
-		repo:          complaintsRepository,
+		Authorization:        NewAuthService(complaintsRepository.Authorization),
+		complaintsRepository: complaintsRepository,
 	}
 }
 
 func (p *ComplaintsProcessor) FindUsers(UserUUID uuid.UUID) (entity.Users, error) {
-	user, err := p.repo.FindUsers(UserUUID)
+	user, err := p.complaintsRepository.FindUsers(UserUUID)
 	if err != nil {
 		return entity.Users{}, err
 	}
@@ -37,14 +37,14 @@ func (p *ComplaintsProcessor) FindUsers(UserUUID uuid.UUID) (entity.Users, error
 }
 
 func (p *ComplaintsProcessor) UpdateComplaintStatus(id string, status string, adminComment string) (time.Time, error) {
-	return p.repo.UpdateComplaintStatus(id, status, adminComment)
+	return p.complaintsRepository.UpdateComplaintStatus(id, status, adminComment)
 }
 func (p *ComplaintsProcessor) DeleteComment(complaintID string, commentID string) error {
-	return p.repo.DeleteComment(complaintID, commentID)
+	return p.complaintsRepository.DeleteComment(complaintID, commentID)
 }
 
 func (p *ComplaintsProcessor) UpdateComplaintPriority(id string, priority string) (time.Time, error) {
-	return p.repo.UpdateComplaintPriority(id, priority)
+	return p.complaintsRepository.UpdateComplaintPriority(id, priority)
 }
 
 // Implement Authorization methods
