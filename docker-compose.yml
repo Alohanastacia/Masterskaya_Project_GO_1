@@ -1,5 +1,6 @@
 services:
   memcached:
+    container_name: memcached_masterskaya_1
     image: memcached
     command:
       - --conn-limit=1024
@@ -7,12 +8,14 @@ services:
       - --threads=4
     ports:
       - 11211:11211
+    networks:
+      - postgres
       
   postgres:
     container_name: postgres_complaint_service_1
     image: postgres:15-alpine
     environment:
-      POSTGRES_DB: ${DB_DBNAME}
+      POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
@@ -46,12 +49,18 @@ services:
     ports:
       - "${APP_PORT}:${APP_PORT}"
     environment:
-      DB_HOST: ${DB_HOST}
+      APP_PORT: ${APP_PORT}
+      DB_HOST: postgres_complaint_service_1
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_DBNAME: ${DB_DBNAME}
+      DB_NAME: ${DB_NAME}
       APP_ENV: ${APP_ENV}
+      JWT_Salt: ${JWT_Salt}
+      JWT_SigningKey: ${JWT_SigningKey}
+      CACHE_HOST: ${CACHE_HOST}
+      CACHE_PORT: ${CACHE_PORT}      
+
     depends_on:
       - postgres
     networks:

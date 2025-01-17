@@ -3,6 +3,7 @@ package repository
 import (
 	"complaint_service/internal/config"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/bradfitz/gomemcache/memcache"
@@ -16,10 +17,12 @@ type SessionCache struct {
 func NewSessionCache() *SessionCache {
 	configs, err := config.LoadEnv()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	connStr := fmt.Sprintf("%v:%v", configs.CacheHost, configs.CachePort)
+	log.Println("Строка подключения к мемкешу:", connStr)
+
 	cacheServer := memcache.New(connStr)
 	cacheServer.Timeout = 5 * time.Second
 	return &SessionCache{

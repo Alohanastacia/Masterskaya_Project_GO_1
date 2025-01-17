@@ -35,3 +35,19 @@ type UserSignUp struct {
 	Password string    `json:"password"`
 	Role     Role      `json:"role"`
 }
+
+type RequestStatustics struct {
+	Period    string `json:"period"`     //Available values : day, week, month
+	StartDate string `json:"start_date"` //Начальная дата для фильтрации (YYYY-MM-DD)
+	EndDate   string `json:"end_date"`   //Конечная дата для фильтрации (YYYY-MM-DD)
+	Status    string `json:"status"`     //Available values : NEW, IN_PROGRESS, DONE, CANCELLED
+	Category  string `json:"category"`   //Фильтр по категории
+	Limit     int    `json:"limit"`      //Максимальное количество записей на странице (по умолчанию 10)
+	Offset    int    `json:"offset"`     //Смещение для пагинации (по умолчанию 0)
+}
+
+type ResponseStatistics struct {
+	TotalReports      int            `json:"total_reports"`
+	ReportsByStatus   map[string]int `json:"reports_by_status"`
+	ReportsByCategory map[string]int `json:"reports_by_category"`
+}

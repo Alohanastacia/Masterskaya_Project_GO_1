@@ -54,6 +54,8 @@ func (h *ComplaintsHandler) signUp(c *fiber.Ctx) {
 }
 
 func (h *ComplaintsHandler) signIn(c *fiber.Ctx) {
+	log.Println("Получен запрос: %w", c.BaseURL())
+
 	var input models.UserSignUp
 
 	if err := c.BodyParser(&input); err != nil {
@@ -67,6 +69,9 @@ func (h *ComplaintsHandler) signIn(c *fiber.Ctx) {
 		}
 		return
 	}
+
+	log.Println("Подготовлена структура:", input)
+
 	token, err := h.complaintsProcessor.Authorization.GetToken(input.UserName, input.Password)
 	if err != nil {
 		err = c.Status(fiber.StatusInternalServerError).JSONP(

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -40,27 +39,29 @@ func NewConfig() Config {
 	}
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) { // проверка, существует ли 2-й файл настроек
-		log.Fatal("config file does not exist: %s", configPath)
+		log.Fatalf("config file does not exist: %s", configPath)
 	}
 
 	var cfg Config
 
 	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
-		log.Fatalf("cannot read config: %s", &err)
+		log.Fatalf("cannot read config: %s", err)
 	}
 
 	return cfg
 }
 
-func LoadEnv() (ENVConfig, error) { //незадействованная функция
+func LoadEnv() (ENVConfig, error) {
 	err := godotenv.Load()
 
 	if err != nil {
+		log.Println("error loading .env file: %w", err)
 		return ENVConfig{}, fmt.Errorf("error loading .env file: %w", err)
 	}
 
 	dbHost := os.Getenv("DB_HOST")
 	if dbHost == "" {
+		log.Println("DB_HOST is not set")
 		return ENVConfig{}, fmt.Errorf("DB_HOST is not set")
 	}
 	dbPort := os.Getenv("DB_PORT")
@@ -93,7 +94,7 @@ func LoadEnv() (ENVConfig, error) { //незадействованная фун�
 		return ENVConfig{}, fmt.Errorf("cache_HOST is not set")
 	}
 	cachePort := os.Getenv("CACHE_PORT")
-	if dbHost == "" {
+	if cachePort == "" {
 		return ENVConfig{}, fmt.Errorf("cache_PORT is not set")
 	}
 	jwtSalt := os.Getenv("JWT_Salt")
@@ -105,24 +106,6 @@ func LoadEnv() (ENVConfig, error) { //незадействованная фун�
 		return ENVConfig{}, fmt.Errorf("JWT_SigningKey is not set")
 	}
 
-	connStr := fmt.Sprintf(
-		"host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		dbHost,
-		dbPort,
-		dbUser,
-		dbName,
-		dbPassword,
-		appEnv,
-	)
-	log.Println(connStr)
-
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		return ENVConfig{}, fmt.Errorf("error connecting to database: %w", err)
-	}
-	if err := db.Ping(); err != nil {
-		return ENVConfig{}, err
-	}
 	return ENVConfig{
 		DBHost:        dbHost,
 		DBPort:        dbPort,
