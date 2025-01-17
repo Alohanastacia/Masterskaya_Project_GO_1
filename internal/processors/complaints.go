@@ -2,6 +2,7 @@ package processors
 
 import (
 	"complaint_service/internal/entity"
+	"complaint_service/internal/models"
 	"complaint_service/internal/repository"
 	"github.com/satori/go.uuid"
 	"time"
@@ -44,6 +45,15 @@ func (p *ComplaintsProcessor) DeleteComment(complaintID string, commentID string
 
 func (p *ComplaintsProcessor) UpdateComplaintPriority(id string, priority string) (time.Time, error) {
 	return p.repo.UpdateComplaintPriority(id, priority)
+}
+
+// Implement Authorization methods
+func (p *ComplaintsProcessor) CreateUser(user models.UserSignUp) (int, error) {
+	return p.Authorization.CreateUser(user)
+}
+
+func (p *ComplaintsProcessor) GetToken(username, password string) (string, error) {
+	return p.Authorization.GetToken(username, password)
 }
 
 // Ниже будут методы ComplaintsProcessor, которые реализуют бизнес логику и вызываются из хендлеров
