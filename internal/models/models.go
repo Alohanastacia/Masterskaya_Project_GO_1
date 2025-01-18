@@ -48,5 +48,6 @@ type UpdateStatusResponse struct {
 }
 
 var (
-	ErrCommentNotFound = errors.New("comment not found")
+	ErrCommentNotFound   = errors.New("comment not found")
+	ErrComplaintNotFound = errors.New("complaint not found")
 )

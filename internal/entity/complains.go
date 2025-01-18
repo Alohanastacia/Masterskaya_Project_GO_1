@@ -44,6 +44,6 @@ type Comment struct {
 	ID          uuid.UUID `db:"id" json:"id"`
 	UserUUID    uuid.UUID `db:"user_uuid" json:"user_uuid"`
 	ComplaintID uuid.UUID `db:"complaint_id" json:"complaint_id"`
-	Text        string    `db:"comment" json:"text"`
+	Comment     string    `db:"comment" json:"comment"`
 	CreatedAt   time.Time `db:"created_at" json:"created_at"`
 }
