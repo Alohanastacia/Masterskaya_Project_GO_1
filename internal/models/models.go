@@ -13,6 +13,23 @@ const (
 	Admin Role = "ADMIN"
 )
 
+type Priority string
+
+const (
+	High   Priority = "high"
+	Medium Priority = "medium"
+	Low    Priority = "low"
+)
+
+type Stage string
+
+const (
+	New        Stage = "new"
+	Inprogress Stage = "inprogress"
+	Done       Stage = "done"
+	Canceled   Stage = "canceled"
+)
+
 type UserSessions struct {
 	Username  string    `json:"username"`
 	Password  string    `json:"password"`
@@ -44,6 +61,13 @@ type RequestStatustics struct {
 	Category  string `json:"category"`   //Фильтр по категории
 	Limit     int    `json:"limit"`      //Максимальное количество записей на странице (по умолчанию 10)
 	Offset    int    `json:"offset"`     //Смещение для пагинации (по умолчанию 0)
+}
+
+type Reports struct {
+	Description string    `json:"description"`
+	Proirity    Priority  `json:"priority"`
+	Stage       Stage     `json:"stage"`
+	UserUUID    uuid.UUID `json:"user_UUID"`
 }
 
 type ResponseStatistics struct {

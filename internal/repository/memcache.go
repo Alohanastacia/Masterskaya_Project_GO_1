@@ -20,7 +20,7 @@ func NewSessionCache() *SessionCache {
 		log.Println(err)
 	}
 
-	connStr := fmt.Sprintf("%v:%v", configs.CacheHost, configs.CachePort)
+	connStr := fmt.Sprintf("%v:%v", "memcached_masterskaya_1", configs.CachePort)
 	log.Println("Строка подключения к мемкешу:", connStr)
 
 	cacheServer := memcache.New(connStr)

@@ -54,7 +54,6 @@ func (h *ComplaintsHandler) signUp(c *fiber.Ctx) {
 }
 
 func (h *ComplaintsHandler) signIn(c *fiber.Ctx) {
-	log.Println("Получен запрос: %w", c.BaseURL())
 
 	var input models.UserSignUp
 
@@ -69,8 +68,6 @@ func (h *ComplaintsHandler) signIn(c *fiber.Ctx) {
 		}
 		return
 	}
-
-	log.Println("Подготовлена структура:", input)
 
 	token, err := h.complaintsProcessor.Authorization.GetToken(input.UserName, input.Password)
 	if err != nil {

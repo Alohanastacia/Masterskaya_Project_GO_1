@@ -18,12 +18,23 @@ type ComplaintsDB struct {
 
 type ComplaintsRepository struct {
 	Authorization
+	ComplaintsManager
+}
+
+type ComplaintsManager interface {
+	FindUsers(UserUUID string, limit, offset int) ([]*entity.Users, error)
+	CreateReport(reports entity.Reports) (int, error)
 }
 
 func CreateComplaintsRepository(db *sqlx.DB) *ComplaintsRepository {
 	return &ComplaintsRepository{
-		Authorization: NewAuthPostgres(db),
+		Authorization:     NewAuthPostgres(db),
+		ComplaintsManager: NewComplaintsDB(db),
 	}
+}
+
+func NewComplaintsDB(db *sqlx.DB) *ComplaintsDB {
+	return &ComplaintsDB{db: db}
 }
 
 func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entity.Users, error) {
@@ -65,4 +76,20 @@ func (rep *ComplaintsDB) FindUsers(UserUUID string, limit, offset int) ([]*entit
 	return []*entity.Users{&user}, nil
 }
 
-// Ниже будут методы ComplaintsRepository, которые делают запросы в БД и отдают результат
+func (r *ComplaintsDB) CreateReport(reports entity.Reports) (int, error) {
+	var id int
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		return 0, fmt.Errorf("repository.CreateReport ошибка создания транзакции: %v", err)
+	}
+	query := fmt.Sprintf("INSERT INTO reports (uuid, user_uuid, description, priority) VALUES ($1,$2,$3,$4) RETURNING id")
+	row := tx.QueryRow(query, reports.Uuid, reports.User_uuid, reports.Description, reports.Proirity)
+	if err := row.Scan(&id); err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+	tx.Commit()
+
+	return id, nil
+}

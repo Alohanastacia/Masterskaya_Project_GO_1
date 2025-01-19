@@ -37,7 +37,7 @@ func (h *ComplaintsHandler) FindUsers(c *fiber2.Ctx) error {
 func (h *ComplaintsHandler) InitRoutes(app *fiber.App) {
 	app.Post("user/register", h.signUp)
 	app.Post("user/login", h.signIn)
-	// app.Get("/reports/statistics", h.statistics)
+	app.Post("/reports", h.CreateReport)
 
 	// проверка связи с сервером
 	app.Get("/ping", func(c *fiber.Ctx) {

@@ -68,12 +68,14 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 		fmt.Println(err)
 	}
 
-	//user.Password = generatePasswordHash(user.Password)
-	user, err := s.repo.GetUser(username, generatePasswordHash(password))
+	password = generatePasswordHash(password)
+	user, err := s.repo.GetUser(username, password)
 	if err != nil {
 		log.Printf("%s: %s", op, err)
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
+
+	log.Println(user.UserUUID)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.StandardClaims{
@@ -166,6 +168,8 @@ func ParseJWT(accessToken string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("token claims are not of type *tokenClaims")
 	}
 
+	log.Println(claims.User_UUID)
+
 	return claims.User_UUID, nil
 }
 
@@ -181,5 +185,5 @@ func generatePasswordHash(password string) string {
 	hash := sha256.New()
 	hash.Write([]byte(password + configs.JwtSalt))
 
-	return fmt.Sprintf("%x", hash.Sum(nil))
+	return fmt.Sprintf("%x", hash.Sum([]byte(configs.JwtSalt)))
 }

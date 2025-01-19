@@ -62,7 +62,7 @@ func (r *AuthPostgres) GetUser(username, password string) (entity.Users, error) 
 
 	log.Printf("Входящий username: %s, password: %s", username, password)
 	var user entity.Users
-	query := fmt.Sprintf("SELECT id FROM %s WHERE username=$1 AND password=$2", usersTable)
+	query := fmt.Sprintf("SELECT id,user_uuid,username,role,password FROM %s WHERE username=$1 AND password=$2", usersTable)
 	log.Println("Сформирована строка подключения:", query)
 
 	err := r.db.Get(&user, query, username, password)
